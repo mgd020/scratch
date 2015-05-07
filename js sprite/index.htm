@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <title>Map Editor</title>
+        <script type="text/javascript" src="animinterval.js"></script>
+        <script type="text/javascript" src="tiles3.js"></script>
+        <script type="text/javascript">
+            var canvas = null;
+            var context = null;
+            
+            var image = new Image();
+            var tileSet = null;
+            var tileMap = null;
+//            var dx = 0.0625;
+//            var dy = 0.0625;
+            
+            image.onload = function()
+            {
+                tileSet = new TileSet(image, 16, 16, 1);
+                tileMap = new TileMap(tileSet, 61, 28);
+                
+                for (var x=0;x<61;++x)
+                {
+                    for (var y=0;y<28;++y)
+                        tileMap.setTile({x:x, y:y}, x, y);
+                }
+            }
+            image.src = "tiles.png";
+            
+            var fps = 0;
+            
+            function draw(time)
+            {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                
+                if (tileMap)
+                {
+                    tileMap.draw(context, 0, 0, canvas.wdith, canvas.height);
+                }
+                
+//                tileMap.viewport.x += dx;
+//                tileMap.viewport.y += dy;
+//                
+//                if (tileMap.viewport.x < 0 || tileMap.viewport.x + tileMap.viewport.width >= canvas.width)
+//                    dx *= -1;
+//                
+//                if (tileMap.viewport.y < 0 || tileMap.viewport.y + tileMap.viewport.height >= canvas.height)
+//                    dy *= -1;
+                                
+                ++fps;
+            }
+            
+            function init()
+            {
+                canvas = document.getElementById("canvas");
+                context = canvas.getContext("2d");
+                setInterval(function() { document.getElementById("fps").innerHTML = "FPS: " + fps; fps = 0; }, 1000);
+            }
+            
+            var drawInterval = null;
+            
+            function start()
+            {
+                drawInterval = setAnimationInterval(draw);
+            }
+            
+            function stop()
+            {
+                clearAnimationInterval(drawInterval);
+            }
+        </script>
+        <style type="text/css">
+            body { background-color: black; margin:0; padding:0; color: gray; }
+            canvas { border: solid gray 1px; }
+        </style>
+    </head>
+    <body onload="init()">
+        <canvas id="canvas" width="976" height="448"></canvas>
+        <p id="fps">FPS: 0</p>
+        <p><input type="button" value="Start" onclick="start();" />
+        <input type="button" value="Stop" onclick="stop();" /></p>
+    </body>
+</html>
